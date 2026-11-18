@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VOYAGER 1 — A Message to the Stars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bk:#03040A;--navy:#080E1B;--mid:#101C32;--blue:#66BFFF;--white:#F5F5F7;--gold:#D9B56D;--mut:#a9b3c6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-behavior:smooth;scroll-padding-top:70px;height:auto}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bk);color:var(--white);font:300 17px/1.7 Inter,system-ui,sans-serif}
+h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:300;margin:0;line-height:1.1}
+canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;gap:6px 18px;align-items:center;flex-wrap:wrap;padding:12px 5vw;background:rgba(3,4,10,.72);backdrop-filter:blur(14px);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+nav b{color:var(--gold);letter-spacing:.3em;margin-right:auto;font-weight:600}
+nav a{color:var(--mut);text-decoration:none}nav a:hover,nav a:focus-visible{color:var(--blue)}
+section{padding:110px 5vw;max-width:1150px;margin:auto}
+.eyebrow{font-size:12px;letter-spacing:.35em;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+h2{font-size:clamp(34px,5vw,58px);margin-bottom:22px}
+.glass{background:rgba(16,28,50,.45);border:1px solid rgba(102,191,255,.18);border-radius:20px;padding:26px;backdrop-filter:blur(12px)}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.btn{font:600 13px Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;padding:14px 26px;border-radius:99px;border:1px solid var(--blue);color:var(--white);background:rgba(102,191,255,.1);cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover,.btn:focus-visible{background:var(--blue);color:var(--bk)}.btn.gold{border-color:var(--gold);background:rgba(217,181,109,.12)}.btn.gold:hover{background:var(--gold)}
+.btn[aria-pressed=true]{background:var(--blue);color:var(--bk)}
+#home{min-height:92vh;display:grid;align-content:center;text-align:center;justify-items:center;padding-top:60px}
+#home h1{font-size:clamp(44px,8.5vw,112px);letter-spacing:.02em;margin:10px 0 18px}
+#home p{color:var(--mut);max-width:560px}.sub{font-style:italic;color:var(--gold)!important;margin:28px 0}
+#ship{width:min(420px,80vw);margin:10px 0;animation:drift 14s ease-in-out infinite;filter:drop-shadow(0 0 40px rgba(217,181,109,.25))}
+@keyframes drift{50%{transform:rotate(-4deg) translateY(-12px) scale(1.03)}}
+.odo{font:300 clamp(30px,6vw,68px)/1 'Cormorant Garamond',serif;color:var(--blue);font-variant-numeric:tabular-nums;word-break:break-all}
+.stat small{display:block;color:var(--mut);font-size:12px;letter-spacing:.18em;text-transform:uppercase}.stat div{font-size:24px;color:var(--white)}
+.warn{border-left:3px solid var(--gold);padding:10px 16px;margin:20px 0;color:var(--mut);font-size:14px;background:rgba(217,181,109,.06)}
+details{border-bottom:1px solid rgba(255,255,255,.1);padding:14px 0}summary{cursor:pointer;font:500 24px 'Cormorant Garamond',serif;color:var(--white)}
+summary span{color:var(--gold);margin-right:14px;font-family:Inter;font-size:14px;letter-spacing:.15em}details p{color:var(--mut);margin:10px 0 4px}
+#stage{position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(102,191,255,.2);background:#02030a}
+#tx{width:100%;height:min(56vh,460px);display:block}
+#fin{position:absolute;inset:0;display:grid;place-content:center;text-align:center;background:#000;opacity:0;pointer-events:none;transition:opacity 1.5s;gap:10px}
+#fin.on{opacity:1}#fin p{font:300 clamp(22px,4vw,40px)/1.3 'Cormorant Garamond',serif;margin:0;opacity:0;transition:opacity 2s}
+#fin.show p{opacity:1}#fin p:nth-child(2){transition-delay:2.5s}#fin p:nth-child(3){transition-delay:5s}#fin p:nth-child(4){transition-delay:7.5s;color:var(--gold)}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}.ctl label{font-size:13px;color:var(--mut)}
+.mono{font:400 15px/1.9 ui-monospace,Menlo,monospace;word-break:break-word}.mono .done{color:var(--blue)}.mono .cur{color:var(--gold);background:rgba(217,181,109,.15)}.mono span{color:#4b5871}
+.sym{font:300 54px/1 'Cormorant Garamond',serif;color:var(--gold);min-height:54px}
+#msg{text-align:center;min-height:90vh;display:grid;align-content:center;justify-items:center}
+#msg .letter{max-width:640px;color:var(--white);font:300 clamp(20px,2.6vw,26px)/1.7 'Cormorant Garamond',serif;text-align:left}
+#msg .letter p{opacity:0;transform:translateY(14px);transition:1.6s}#msg .letter p.in{opacity:1;transform:none}
+.pbd{height:220px;position:relative;border-radius:20px;background:linear-gradient(100deg,#02030a 30%,#0b1730 48%,#02030a 66%);overflow:hidden;margin:20px 0}
+.pbd i{position:absolute;left:52%;top:52%;width:5px;height:5px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue)}
+.pbd em{position:absolute;left:calc(52% + 18px);top:calc(52% - 10px);font-size:12px;color:var(--mut);font-style:normal}
+table{width:100%;border-collapse:collapse;font-size:15px}td,th{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.1);text-align:left}th{color:var(--gold);font-weight:400}
+footer{padding:80px 5vw 60px;text-align:center;color:var(--mut);font-size:13px;border-top:1px solid rgba(255,255,255,.08)}footer h3{font-size:30px;color:var(--white);margin-bottom:6px}footer a{color:var(--blue)}
+.tl{border-left:1px solid var(--gold);padding-left:22px;margin-left:6px}
+@media(prefers-reduced-motion:reduce){#ship{animation:none}html{scroll-behavior:auto}*{transition:none!important}}
+</style></head><body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<nav aria-label="Main"><b>VOYAGER 1</b><a href="#transmission">Transmission</a><a href="#home">Home</a><a href="#tracker">Live Tracker</a><a href="#mission">Mission</a><a href="#golden-record">Golden Record</a><a href="#discoveries">Discoveries</a><a href="#message">Our Message</a></nav>
+
+<section id="transmission">
+<div class="eyebrow">Signature experience</div><h2>The Last Transmission</h2>
+<p style="color:var(--mut)">A symbolic artwork: a thank-you in International Morse code, sent as pulses of light from Earth to Voyager 1. <b>It is not a real radio transmission to the spacecraft.</b></p>
+<div id="stage"><canvas id="tx" aria-label="Animated Morse code pulses travelling from Earth to Voyager 1"></canvas>
+<div id="fin"><p>FROM EARTH, WITH LOVE.</p><p>KEEP GOING, VOYAGER 1.</p><p>YOU HAVE DONE GREAT.</p><p>BEST OF LUCK. ❤️</p></div></div>
+<div class="ctl">
+<button class="btn" id="bStart">Start transmission</button><button class="btn" id="bPause">Pause</button><button class="btn" id="bResume">Resume</button><button class="btn" id="bReplay">Replay</button><button class="btn" id="bStop">Stop</button>
+<button class="btn" id="bSound" aria-pressed="false">Sound off</button>
+<label>Speed <input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"></label>
+<label>Volume <input type="range" id="vol" min="0" max="1" step="0.05" value="0.3"></label></div>
+<div class="grid">
+<div class="glass"><div class="eyebrow">Symbol</div><div class="sym" id="dSym">·</div><div class="eyebrow">Character</div><div class="sym" id="dCh">–</div></div>
+<div class="glass"><div class="eyebrow">Current word</div><div class="sym" id="dWord" style="font-size:34px">–</div><div class="eyebrow">Progress</div><div class="sym" id="dPct" style="font-size:34px">0%</div></div></div>
+<div class="glass" style="margin-top:18px"><div class="eyebrow">Morse sequence</div><div class="mono" id="mseq"></div><div class="eyebrow" style="margin-top:14px">English</div><div class="mono" id="dEn" style="color:var(--white)">…</div><div class="eyebrow" style="margin-top:14px">Encoder check</div><div class="mono" id="chk" style="color:var(--mut)"></div></div>
+</section>
+
+<section id="home">
+<div class="eyebrow">NASA’s Interstellar Mission</div>
+<h1>THE JOURNEY<br>BEYOND EVERYTHING.</h1>
+<svg id="ship" viewBox="0 0 400 260" role="img" aria-label="Illustration of the Voyager 1 spacecraft with its golden high-gain antenna">
+<defs><radialGradient id="g" cx="40%" cy="35%"><stop offset="0" stop-color="#fff2c8"/><stop offset=".55" stop-color="#D9B56D"/><stop offset="1" stop-color="#6e5320"/></radialGradient></defs>
+<g stroke="#8fa0bd" stroke-width="2" fill="none"><path d="M200 135 L20 200"/><path d="M200 135 L370 215"/><path d="M200 135 L330 60"/><path d="M20 200 l-8 6M370 215 l8 8"/></g>
+<rect x="355" y="205" width="30" height="14" fill="#556" rx="3"/><rect x="2" y="193" width="22" height="9" fill="#778" rx="3"/>
+<ellipse cx="200" cy="105" rx="105" ry="92" fill="url(#g)"/><ellipse cx="200" cy="105" rx="78" ry="66" fill="none" stroke="#7a5c1f" stroke-width="1.5"/><ellipse cx="200" cy="105" rx="44" ry="36" fill="none" stroke="#7a5c1f"/>
+<path d="M200 105 L200 150" stroke="#cbd" stroke-width="3"/><polygon points="170,150 230,150 242,172 225,196 175,196 158,172" fill="#2a3550" stroke="#99a9c8"/><circle cx="330" cy="60" r="7" fill="#66BFFF"/></svg>
+<p>One spacecraft. One extraordinary journey. A message from Earth travelling into the unknown.</p>
+<p class="sub">Somewhere beyond the stars, a little piece of Earth keeps travelling.</p>
+<div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center"><a class="btn" href="#tracker">Track Voyager 1</a><a class="btn gold" href="#mission">Explore its journey</a></div>
+</section>
+
+<section id="tracker">
+<div class="eyebrow">Live Tracker</div><h2>How far is Voyager 1, right now?</h2>
+<div class="glass">
+<div class="stat"><small>Distance from Earth (km) — estimate</small></div>
+<div class="odo" id="km" aria-live="off">—</div>
+<div class="grid" style="margin-top:26px">
+<div class="stat"><small>Miles</small><div id="mi"></div></div>
+<div class="stat"><small>Astronomical units</small><div id="au"></div></div>
+<div class="stat"><small>One-way light time</small><div id="lt"></div></div>
+<div class="stat"><small>Round-trip signal</small><div id="rt"></div></div>
+<div class="stat"><small>Speed (relative to Sun, approx.)</small><div>≈ 16.9 km/s</div></div>
+<div class="stat"><small>Direction</small><div>Away from the Sun, roughly toward Ophiuchus</div></div>
+</div>
+<div class="warn"><b>Honest labelling.</b> Voyager 1 has no GPS. These numbers are a <b>calculated estimate</b>, not telemetry and not a live NASA Horizons query: they start from NASA’s published one-light-day milestone (<b>18 Nov 2026, 10:16:07 UTC, 25,902,068,371 km from Earth</b>) and advance at ≈16.9 km/s. Earth’s own orbit changes the true Earth-range rate over the year, so treat the ticking as an estimate. For authoritative values use NASA’s <a style="color:var(--blue)" href="https://science.nasa.gov/mission/voyager/where-are-voyager-1-and-voyager-2-now/" target="_blank" rel="noopener">Where Are Voyager 1 and 2 Now?</a> page or <a style="color:var(--blue)" href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noopener">JPL Horizons</a>.<br>Anchor epoch: <span id="anc"></span> · Calculated at: <span id="calc"></span></div>
+</div>
+<div class="grid" style="margin-top:18px">
+<div class="glass"><h3 style="font-size:30px">The one light-day milestone</h3><p style="color:var(--mut)">One light-day is the distance light travels in 24 hours: 299,792.458 km/s × 86,400 s ≈ <b>25.9 billion km</b> (≈173 AU). NASA’s stated crossing was 18 November 2026 at 10:16:07 UTC, so a radio signal now needs a full day to reach Voyager 1 — and another day for the reply. Signal travel time is calculated; communication status must come from NASA.</p></div>
+<div class="glass"><svg viewBox="0 0 200 200" id="map" role="img" aria-label="Schematic map of Voyager 1’s distance on a logarithmic scale" style="width:100%"></svg><p style="font-size:13px;color:var(--mut);margin:0">Schematic, <b>not to scale</b>: logarithmic distance rings (Earth, Jupiter, Saturn, Neptune). Direction is illustrative.</p></div>
+</div></section>
+
+<section id="mission">
+<div class="eyebrow">Mission</div><h2>Fifty years of going outward.</h2>
+<div class="grid" style="margin-bottom:40px">
+<div class="glass stat"><small>Agency</small><div>NASA / JPL</div></div>
+<div class="glass stat"><small>Launched</small><div>5 Sep 1977</div></div>
+<div class="glass stat"><small>Mission duration</small><div id="dur"></div></div>
+<div class="glass stat"><small>Status</small><div>Operating in interstellar space</div></div></div>
+<p style="color:var(--mut)">NASA has been switching off instruments one by one to stretch the spacecraft’s shrinking power from its radioisotope generators, which lose roughly 4 watts a year. Which instruments are still on, and the latest engineering updates, change over time — see the <a style="color:var(--blue)" href="https://science.nasa.gov/mission/voyager/voyager-1/" target="_blank" rel="noopener">official Voyager 1 page</a> rather than relying on this summary. Communication runs through NASA’s Deep Space Network at a very low data rate.</p>
+<h3 style="margin:50px 0 20px;font-size:36px">Timeline</h3>
+<div class="tl">
+<details><summary><span>1977</span>Launch</summary><p>5 September 1977, Cape Canaveral. The start of a “grand tour” mission that was only meant to last a few years.</p></details>
+<details><summary><span>1979</span>Jupiter encounter</summary><p>Closest approach 5 March 1979. Voyager 1 revealed volcanic activity on the moon Io — the first active volcanoes seen beyond Earth — and detailed Jupiter’s storms and thin rings.</p></details>
+<details><summary><span>1980</span>Saturn encounter</summary><p>Flyby on 12 November 1980 studied Saturn’s rings and the thick atmosphere of Titan. Titan’s gravity flung the spacecraft out of the planetary plane, ending its planetary tour.</p></details>
+<details><summary><span>1990</span>Pale Blue Dot</summary><p>On 14 February 1990 Voyager 1 turned its camera back and photographed Earth from about 6 billion km away.</p></details>
+<details><summary><span>2012</span>Interstellar space</summary><p>In August 2012 Voyager 1 crossed the heliopause into interstellar space — the first human-made object to do so. NASA confirmed it in 2013.</p></details>
+<details open><summary><span>2026</span>One light-day</summary><p>On 18 November 2026 at 10:16:07 UTC (per NASA’s published prediction) Voyager 1 reached 25.9 billion km from Earth: the first spacecraft a full light-day away. Voyager 2 is expected to follow around 2035.</p></details>
+</div>
+<h3 style="margin:60px 0 12px;font-size:36px">Voyager 1 vs Voyager 2</h3>
+<div class="glass" style="overflow-x:auto"><table><tr><th></th><th>Voyager 1</th><th>Voyager 2</th></tr>
+<tr><td>Launch</td><td>5 Sep 1977</td><td>20 Aug 1977</td></tr>
+<tr><td>Planets visited</td><td>Jupiter (1979), Saturn (1980)</td><td>Jupiter (1979), Saturn (1981), Uranus (1986), Neptune (1989)</td></tr>
+<tr><td>Interstellar space</td><td>2012</td><td>2018</td></tr>
+<tr><td>Speed (approx.)</td><td>≈ 17 km/s</td><td>≈ 15 km/s</td></tr>
+<tr><td>One light-day</td><td>18 Nov 2026</td><td>≈ Nov 2035 (NASA projection)</td></tr></table></div>
+<h3 style="margin:60px 0 12px;font-size:36px">Pale Blue Dot</h3>
+<div class="pbd" role="img" aria-label="Schematic of Earth as a tiny dot in a scattered sunbeam"><i></i><em>Earth</em></div>
+<p style="color:var(--mut)">Carl Sagan urged NASA to point the camera home before it was switched off. From roughly 6 billion km (about 40 AU) Earth covered less than a pixel, caught in a streak of scattered sunlight. Sagan saw in it the case for caring for the only home we have. This is a schematic — view the authentic NASA photograph at <a style="color:var(--blue)" href="https://science.nasa.gov/resource/solar-system-portrait-earth-as-pale-blue-dot/" target="_blank" rel="noopener">NASA Science</a> (image credit: NASA/JPL-Caltech).</p>
+<h3 style="margin:60px 0 12px;font-size:36px">Latest news</h3>
+<div class="warn">This page can’t fetch news live, so it shows no headlines rather than risk inventing any. Official sources: <a style="color:var(--blue)" href="https://www.jpl.nasa.gov/news/" target="_blank" rel="noopener">NASA JPL News</a> · <a style="color:var(--blue)" href="https://science.nasa.gov/mission/voyager/" target="_blank" rel="noopener">NASA Voyager mission</a> · <a style="color:var(--blue)" href="https://voyager.jpl.nasa.gov/" target="_blank" rel="noopener">voyager.jpl.nasa.gov</a>.</div>
+</section>
+
+<section id="golden-record">
+<div class="eyebrow">The Golden Record</div><h2>A gift from a small planet.</h2>
+<p style="color:var(--mut);max-width:720px">Each Voyager carries a 12-inch gold-plated copper phonograph record with instructions for playing it, made to represent life and culture on Earth. A NASA committee chaired by Carl Sagan selected its contents; Ann Druyan, Frank Drake, Jon Lomberg and Timothy Ferris were among its creators.</p>
+<div class="grid" id="rec" style="margin-top:28px"></div>
+<p style="font-size:13px;color:var(--mut)">Source &amp; audio: <a style="color:var(--blue)" href="https://voyager.jpl.nasa.gov/golden-record/" target="_blank" rel="noopener">NASA/JPL Golden Record</a>. Contents summarised here; no audio is reproduced.</p>
+</section>
+
+<section id="discoveries">
+<div class="eyebrow">Discoveries</div><h2>Understand the journey.</h2>
+<div id="faq"></div></section>
+
+<section id="message">
+<div class="eyebrow">Our Message</div><h2>YOU’VE DONE GREAT, VOYAGER.</h2>
+<div class="letter">
+<p>Dear Voyager 1,</p><p>You started your journey when the world was very different.</p><p>You travelled past giant planets, crossed the boundary of our solar system and ventured into the unknown.</p><p>You carry the sounds, images and greetings of a tiny planet called Earth.</p><p>You remind us how far human curiosity can travel.</p><p>We don’t know how long your journey will continue, but we want you to know that you’ve already made history.</p><p>Thank you for everything.</p><p>Keep going. Keep travelling.</p><p style="color:var(--gold)">BEST OF LUCK, VOYAGER 1.</p><p>With love, from Earth. ❤️</p></div></section>
+
+<footer><h3>MADE ON EARTH. TRAVELLING BEYOND IT.</h3><p>VOYAGER 1 — A MESSAGE TO THE STARS.</p>
+<p>Facts: NASA/JPL-Caltech. Links: <a href="https://science.nasa.gov/mission/voyager/" target="_blank" rel="noopener">NASA Voyager</a> · <a href="https://voyager.jpl.nasa.gov/" target="_blank" rel="noopener">Voyager JPL</a> · <a href="https://ssd-api.jpl.nasa.gov/doc/horizons.html" target="_blank" rel="noopener">JPL Horizons docs</a> · <a href="https://www.jpl.nasa.gov/news/" target="_blank" rel="noopener">JPL News</a></p>
+<p>Tracker values are calculated estimates anchored to NASA’s published light-day milestone. This is an unofficial fan tribute, not affiliated with NASA. NASA imagery is credited to NASA/JPL-Caltech.</p></footer>
+
+<script>
+const $=id=>document.getElementById(id),RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+/* starfield */
+const bg=$('bg'),bx=bg.getContext('2d');let stars=[];
+function sizeBg(){bg.width=innerWidth;bg.height=innerHeight;stars=Array.from({length:Math.min(260,innerWidth/4)},()=>({x:Math.random()*bg.width,y:Math.random()*bg.height,z:Math.random()*.9+.1,p:Math.random()*6}))}
+sizeBg();addEventListener('resize',sizeBg);
+function drawBg(t){bx.clearRect(0,0,bg.width,bg.height);const gr=bx.createRadialGradient(bg.width*.7,bg.height*.2,0,bg.width*.7,bg.height*.2,bg.width*.7);gr.addColorStop(0,'rgba(16,28,50,.7)');gr.addColorStop(1,'rgba(3,4,10,0)');bx.fillStyle=gr;bx.fillRect(0,0,bg.width,bg.height);
+ const sy=scrollY;for(const s of stars){const y=((s.y-sy*s.z*.15)%bg.height+bg.height)%bg.height;bx.globalAlpha=.4+.6*Math.abs(Math.sin(t/1500*(RM?0:1)+s.p))*s.z;bx.fillStyle=s.z>.8?'#cfe8ff':'#fff';bx.fillRect(s.x,y,s.z*1.8,s.z*1.8)}bx.globalAlpha=1}
+/* tracker */
+const T0=Date.UTC(2026,10,18,10,16,7),D0=25902068371,V=16.9,C=299792.458,AUKM=149597870.7;
+const fmt=(s)=>{s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h+'h '+String(m).padStart(2,'0')+'m '+String(s%60).padStart(2,'0')+'s'};
+function trk(){const n=Date.now(),d=D0+V*(n-T0)/1000;$('km').textContent=Math.round(d).toLocaleString('en-US');$('mi').textContent=Math.round(d*.621371).toLocaleString('en-US');$('au').textContent=(d/AUKM).toFixed(3);$('lt').textContent=fmt(d/C);$('rt').textContent=fmt(2*d/C);$('calc').textContent=new Date(n).toUTCString();
+ const L=new Date(n)-Date.UTC(1977,8,5);const dd=Math.floor(L/864e5);$('dur').textContent=Math.floor(dd/365.2425)+' yrs, '+Math.floor(dd%365.2425)+' days'}
+$('anc').textContent=new Date(T0).toUTCString()+' (NASA-published milestone)';trk();setInterval(trk,100);
+(function(){const m=$('map');let h='';[['Earth',1],['Jupiter',5.2],['Saturn',9.58],['Neptune',30.1],['Voyager 1',173.1]].forEach(([n,a])=>{const r=40*Math.log10(1+a);const v=n=='Voyager 1';h+=`<circle cx="100" cy="100" r="${r}" fill="none" stroke="${v?'#D9B56D':'#66BFFF'}" stroke-opacity="${v?.9:.3}" stroke-dasharray="${v?'':'2 3'}"/><text x="${100+r*.707+2}" y="${100+r*.707}" font-size="6" fill="#a9b3c6">${n}</text>`});
+ h+='<circle cx="100" cy="100" r="3" fill="#D9B56D"/><line x1="100" y1="100" x2="146" y2="21" stroke="#D9B56D" stroke-opacity=".5"/><circle cx="146" cy="21" r="3.5" fill="#fff2c8"/>';m.innerHTML=h})();
+/* record + faq */
+const REC=[['Greetings in 55 languages','Spoken welcomes from people around the world, from ancient Sumerian to modern tongues, plus a message from then-UN Secretary-General Kurt Waldheim and President Jimmy Carter.'],['Sounds of Earth','Wind, rain, thunder, surf, birds, whales, a heartbeat, laughter and a kiss, and the sounds of tools, machines and early transport.'],['Music of many cultures','About 90 minutes: Bach, Beethoven, Mozart, Chuck Berry’s “Johnny B. Goode”, Blind Willie Johnson, a Navajo night chant, Peruvian and Georgian songs and more.'],['115 images','Analogue-encoded pictures of Earth, DNA, people, buildings, food and landscapes — a portrait of human life.'],['Instructions','A diagram on the cover shows how to play the record, with a pulsar map giving Earth’s location.'],['Brain waves','Recordings of Ann Druyan’s brain and heart signals while meditating on Earth, its people and love.']];
+$('rec').innerHTML=REC.map(([t,d])=>`<div class="glass"><h3 style="font-size:28px;color:var(--gold)">${t}</h3><p style="color:var(--mut);font-size:15px;margin:10px 0 0">${d}</p></div>`).join('');
+const FAQ=[['What is interstellar space?','The region beyond the Sun’s influence, filled with gas and dust from other stars. Voyager 1 entered it in 2012.'],['What is the heliosphere?','A vast bubble of charged particles blown outward by the Sun. Its edge, the heliopause, is where the solar wind meets the interstellar medium.'],['How does Voyager talk to Earth?','Through radio. It transmits with a dish antenna and a low-power X-band transmitter; signals are weak and slow, and now take about a day each way.'],['What is the Deep Space Network?','NASA’s global network of giant dishes (California, Spain, Australia) that sends commands to and receives data from distant spacecraft.'],['How does it make electricity?','Radioisotope thermoelectric generators turn heat from decaying plutonium-238 into electricity. Output falls about 4 watts a year.'],['What instruments does it carry?','Cosmic-ray, plasma-wave, magnetometer, plasma and charged-particle instruments, among others. Several have been turned off to save power.'],['Why does it matter?','It was the first human-made object in interstellar space and gave humanity its first direct sampling of that environment.'],['What happens at the end?','NASA expects power to run out in the early 2030s. The spacecraft will fall silent but keep drifting through the Milky Way for billions of years.']];
+$('faq').innerHTML=FAQ.map(([q,a],i)=>`<details><summary><span>0${i+1}</span>${q}</summary><p>${a}</p></details>`).join('');
+/* tribute reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){[...document.querySelectorAll('#msg .letter p')].forEach((p,i)=>setTimeout(()=>p.classList.add('in'),RM?0:i*900));io.disconnect()}}),{threshold:.3});io.observe($('message'));
+/* morse */
+const M={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.',0:'-----','.':'.-.-.-'};
+const MSG='THANK YOU VOYAGER 1. YOU HAVE DONE GREAT. BEST OF LUCK.';
+const words=MSG.split(' '),chars=[],segs=[];let tt=0;
+words.forEach((w,wi)=>{[...w].forEach((c,ci)=>{const code=M[c],idx=chars.length;chars.push({c,code,wi,end:0});[...code].forEach((s,si)=>{const u=s=='.'?1:3;segs.push({on:1,s:tt,e:tt+u,ch:idx,sym:s});tt+=u;chars[idx].end=tt;if(si<code.length-1){segs.push({on:0,s:tt,e:tt+1,ch:idx});tt+=1}});if(ci<w.length-1){segs.push({on:0,s:tt,e:tt+3,ch:idx});tt+=3}});if(wi<words.length-1){segs.push({on:0,s:tt,e:tt+7,ch:chars.length-1});tt+=7}});
+const TOTAL=tt,INV=Object.fromEntries(Object.entries(M).map(([k,v])=>[v,k]));
+(function(){let out='',cur='';segs.forEach(g=>{const d=g.e-g.s;if(g.on)cur+=d==1?'.':'-';else if(d>=3){out+=INV[cur];cur='';if(d==7)out+=' '}});out+=INV[cur];$('chk').textContent=(out==MSG?'✓ ':'✗ ')+'Decoded timing round-trip: “'+out+'” · '+TOTAL+' units (dot 1, dash 3, gaps 1/3/7)'})();
+$('mseq').innerHTML=chars.map((c,i)=>`<span id="m${i}">${c.code}</span>`+((chars[i+1]&&chars[i+1].wi!=c.wi)?' / ':' ')).join('');
+const tx=$('tx'),cx=tx.getContext('2d');let st='idle',u=0,fT=0,sp=1,shown=false,ptr=0,lastOn=0,lastN=-1,vis=false,txS=[];
+const UNIT=150,TRAVEL=16;
+function sizeTx(){tx.width=tx.clientWidth*devicePixelRatio;tx.height=tx.clientHeight*devicePixelRatio;txS=Array.from({length:380},()=>({x:Math.random(),y:Math.random(),z:Math.random()*.9+.1}))}
+sizeTx();addEventListener('resize',sizeTx);new IntersectionObserver(e=>vis=e[0].isIntersecting).observe(tx);
+let ac,osc,gn;function beep(on){if(!soundOn)return;try{if(!ac){ac=new AudioContext();osc=ac.createOscillator();gn=ac.createGain();osc.frequency.value=620;gn.gain.value=0;osc.connect(gn).connect(ac.destination);osc.start()}if(ac.state=='suspended')ac.resume();gn.gain.setTargetAtTime(on?+$('vol').value:0,ac.currentTime,.005)}catch(e){}}
+let soundOn=false;
+function ui(seg){const n=seg?(u>=chars[seg.ch].end?seg.ch+1:seg.ch):0,fin=st=='fin'||st=='done';const N=fin?chars.length:n;
+ $('dSym').textContent=seg&&seg.on&&st=='play'?(seg.sym=='.'?'• dot':'— dash'):'·';
+ $('dPct').textContent=Math.min(100,Math.floor(u/TOTAL*100))+'%';
+ if(N!=lastN){lastN=N;let s='',cw='';chars.forEach((c,i)=>{if(i<N){if(i&&c.wi!=chars[i-1].wi){s+=' ';cw=''}s+=c.c;cw+=c.c}});$('dEn').textContent=s||'…';$('dWord').textContent=cw||'–';$('dCh').textContent=N?chars[N-1].c:'–';chars.forEach((c,i)=>{$('m'+i).className=i<N?'done':(seg&&i==seg.ch?'cur':'')})}}
+function reset(){st='idle';u=0;fT=0;shown=false;ptr=0;lastOn=0;lastN=-1;beep(0);$('fin').className='';$('dSym').textContent='·';ui(null);$('dEn').textContent='…';$('dWord').textContent='–';$('dCh').textContent='–';chars.forEach((c,i)=>$('m'+i).className='')}
+$('bStart').onclick=()=>{if(st=='idle'){st='play'}};$('bPause').onclick=()=>{if(st=='play'){st='pause';beep(0)}};$('bResume').onclick=()=>{if(st=='pause')st='play'};$('bReplay').onclick=()=>{reset();st='play'};$('bStop').onclick=reset;
+$('bSound').onclick=e=>{soundOn=!soundOn;e.target.setAttribute('aria-pressed',soundOn);e.target.textContent=soundOn?'Sound on':'Sound off';if(!soundOn)beep(0)};
+$('speed').oninput=e=>sp=+e.target.value;
+function drawTx(){const W=tx.width,H=tx.height,ex=W*.1,vx=W*.9,y=H*.55;cx.fillStyle='rgba(2,3,10,.35)';cx.fillRect(0,0,W,H);
+ for(const s of txS){const x=((s.x*W-u*s.z*3*devicePixelRatio)%W+W)%W;cx.fillStyle='rgba(255,255,255,'+(.25+s.z*.6)+')';cx.fillRect(x,s.y*H,s.z*2*devicePixelRatio,s.z*2*devicePixelRatio)}
+ const d=devicePixelRatio,on=st=='play'&&segs[ptr]&&segs[ptr].on;
+ const eg=cx.createRadialGradient(ex,y,0,ex,y,70*d*(on?1.6:1));eg.addColorStop(0,on?'rgba(180,225,255,.95)':'rgba(102,191,255,.7)');eg.addColorStop(1,'rgba(102,191,255,0)');cx.fillStyle=eg;cx.beginPath();cx.arc(ex,y,70*d*(on?1.6:1),0,7);cx.fill();cx.fillStyle='#3b8fe0';cx.beginPath();cx.arc(ex,y,16*d,0,7);cx.fill();
+ let arr=0;if(st=='play'||st=='pause'||st=='done'){for(const g of segs){if(!g.on||g.s>u)continue;const p=(u-g.s)/TRAVEL;if(p>1.15)continue;const len=(g.e-g.s)*.012*(vx-ex);const x=ex+p*(vx-ex);const L=g.sym=='.'?6*d:len*1.2+10*d;const gr=cx.createLinearGradient(x-L,0,x,0);gr.addColorStop(0,'rgba(102,191,255,0)');gr.addColorStop(1,'rgba(220,240,255,.95)');cx.fillStyle=gr;cx.shadowColor='#66BFFF';cx.shadowBlur=14*d;cx.fillRect(Math.min(x,vx)-L,y-3*d,L,6*d);cx.shadowBlur=0;if(p>=1)arr=Math.max(arr,1-(p-1)/.15)}}
+ const vg=cx.createRadialGradient(vx,y,0,vx,y,50*d*(1+arr));vg.addColorStop(0,'rgba(217,181,109,'+(.6+.4*arr)+')');vg.addColorStop(1,'rgba(217,181,109,0)');cx.fillStyle=vg;cx.beginPath();cx.arc(vx,y,50*d*(1+arr),0,7);cx.fill();cx.fillStyle='#fff2c8';cx.beginPath();cx.arc(vx,y,5*d,0,7);cx.fill();
+ cx.fillStyle='#a9b3c6';cx.font=12*d+'px Inter,sans-serif';cx.textAlign='center';cx.fillText('EARTH',ex,y+38*d);cx.fillText('VOYAGER 1',vx,y+38*d)}
+let last=performance.now();
+function frame(now){const dt=Math.min(100,now-last);last=now;drawBg(now);
+ if(st=='play'){u+=dt*sp/UNIT;while(ptr<segs.length-1&&u>=segs[ptr].e)ptr++;const seg=segs[ptr],on=u<TOTAL&&seg.on?1:0;if(on!=lastOn){lastOn=on;beep(on)}
+  if(u>=TOTAL+TRAVEL){st='fin';fT=0;beep(0);$('fin').className='on'}ui(u<TOTAL?seg:segs[segs.length-1])}
+ else if(st=='fin'){fT+=dt;if(!shown&&fT>2000+1500){shown=true;$('fin').className='on show'}if(fT>16000)st='done'}
+ if(vis)drawTx();requestAnimationFrame(frame)}
+if(RM)drawBg(0);requestAnimationFrame(frame);
+</script></body></html>
